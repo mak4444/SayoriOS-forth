@@ -829,6 +829,7 @@ void readFile() {
     char * buffer = (char*) *Stack;
     FILE* file = (FILE*) Tos;
     if( len > (file->size - file->pos)) len = file->size - file->pos;
+    if(!len) { *Stack=0; Tos = 0; return; }
 
     *Stack = fread( file , 1, len, buffer);
 	Tos = 0;
@@ -872,7 +873,7 @@ void writeFile() {
     FILE* file = (FILE*) Tos;
 
     Tos = fwrite( file , len, 1, buffer);
-	Tos &= -70;
+	Tos = 0; // &= -70;
 
 } pp(writeFile)
 
@@ -886,20 +887,38 @@ void  Test1(void) {
 
 void  Test2(void) {
 
-	FILE* file = (FILE*)Tos;
+	const char* filename = "T:/filename.txt";
+	if(touch(filename))
+	{ FILE* file;
+	  file = fopen(filename, "r");
+	  if(file) 
+  	  {  fwrite(file, 5 , 1, "bytes");
+	     fclose(file);  	  
+  	  }
+  	  else
+  	  { tty_printf("fopen %s err\n",filename);
+  	  }
+	}
+	else
+	{ tty_printf("touch err\n");
+	}
+	
+	filename = "T:/filenameq.txt";
+	if(touch(filename))
+	{ FILE* file;
+	  file = fopen(filename, "r");
+	  if(file) 
+  	  {  fwrite(file, 5 , 1, "bytes");
+	     fclose(file);  	  
+  	  }
+  	  else
+  	  { tty_printf("fopen %s err\n",filename);
+  	  }
+	}
+	else
+	{ tty_printf("touch err\n");
+	}
 
-    size_t filesize = fsize(file);
-
-    uint8_t* buffer = kcalloc(1,filesize + 1);
-
-    size_t nn = fread(file, 1, filesize+111, buffer);
-
-	tty_printf("%s | %d ", buffer,nn);
-
-    fclose(file);
-
-	kfree(buffer);
-	Drop();
  tty_printf("Test2\n"); }  pp(Test2)
 
 void  Test3(void) {
@@ -1700,6 +1719,7 @@ uint32_t forth_sys(uint32_t c, char* v[]){
 	forth_run=1;
 
      _tty_printf("Hello from Forth!!! %s \n", v[1]);
+
 
 	set_cursor_enabled(false);
 //         pek();
