@@ -352,7 +352,7 @@ FLOAD ForthLib/dpoint.4th
 
 \ : WWW BEGIN SCANKEY dup H. SCAN2UN h. AGAIN ;
 
-\- CREATE-FILE : CREATE-FILE $8000 OR OPEN-FILE ; 
+\- CREATE-FILE : CREATE-FILE  $8000 OR OPEN-FILE ; 
 
 FLOAD ForthLib/tools/dir.4th 
 REQUIRE EXKEY ForthLib/ext/exkey.4th
@@ -367,6 +367,12 @@ REQUIRE EDIT ForthLib/tools/view.4th
 
  LASTSTP: : SCANKEYTST BEGIN SCANKEY dup H. SCAN2UN DUP h. BL = UNTIL ; SCANKEYTST
  LASTSTP: CLI> HELP
+ LASTSTP: DIR_DRAW_
+ LASTSTP: DIR
+ LASTSTP: CD R:
+ LASTSTP: CD T:
+ LASTSTP: : KEYTST BEGIN KEY DUP h. BL = UNTIL ; KEYTST
+ LASTSTP: S" QWERTY" S" T:\filename.txt" $MEM2FILE
 
 .\ dump ( addr len ) -  просмотр памяти
 .( dir - Выводит список файлов и папок.) cr
