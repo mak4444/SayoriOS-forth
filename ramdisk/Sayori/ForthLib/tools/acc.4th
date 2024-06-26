@@ -215,11 +215,7 @@ VARIABLE COUNT_STP
 \   0xE0 ACC_EMIT ACC_EMIT 0
  ENDCASE ;
 
-: ACCEPTG2_ ( c-ar +n1 -- c-addr EA A )
-\   GETXY NIP COLS 1- - NEGATE UMIN
-	COLS 1- 1- UMIN
-   2DUP BLANK
-   OVER + 1- OVER      \ SA EA A
+: ACCEPT_DO ( SA EA A -- c-addr EA A )
    BEGIN
 \ CURSOR
 	 KEY          \ SA EA A C
@@ -236,6 +232,14 @@ VARIABLE COUNT_STP
               0 ENDCASE  OVER UMIN \ SA EA A
    REPEAT                         \ SA EA A C
    DROP
+;
+
+: ACCEPTG2_ ( c-ar +n1 -- c-addr EA A )
+\   GETXY NIP COLS 1- - NEGATE UMIN
+	COLS 1- 1- UMIN
+   2DUP BLANK
+   OVER + 1- OVER      \ SA EA A
+   ACCEPT_DO
 ;
 
 : ACCEPTG2 ( c-addr +n1 -- +n2 ) \ 94
