@@ -794,8 +794,8 @@ void openFile() {
 
     while(plen){ --plen; filename[plen] = G_CLI_PATH[plen]; }
 
-	FSM_FILE finfo = nvfs_info(filename);
 	if(Tos & 0x8000 )  nvfs_create(filename, 0);
+	FSM_FILE finfo = nvfs_info(filename);
 	if (finfo.Ready == 0) {
         //kfree(file);
         qemu_err("Failed to open file: %s (Exists: %d)",
@@ -876,6 +876,14 @@ void writeFile() {
 	Tos = 0; // &= -70;
 
 } pp(writeFile)
+
+// RESIZE-FILE ( ud fileid -- ior ) 
+
+void resizeFile() {
+    FILE* file = (FILE*) Tos;
+   file->size = *Stack++;
+   Tos=0;
+} pp(resizeFile)
 
 
     char filename[111];	
@@ -1594,6 +1602,7 @@ void  MakeImag(void)
     FthItem("READ-FILE",~preadFile);
     FthItem("READ-LINE",~preadLine);
     FthItem("WRITE-FILE",~pwriteFile);
+    FthItem("RESIZE-FILE",~presizeFile);
 
 
     FthItem("CLOSE-FILE",~pcloseFile);
