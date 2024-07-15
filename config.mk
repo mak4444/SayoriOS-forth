@@ -4,7 +4,7 @@
 
 KERNEL = iso/boot/kernel.elf
 DEBUG =# -ggdb3 #-Werror
-MEMORY_SIZE=128M
+MEMORY_SIZE?=128M
 USE_SSE=true
 
 COMPILER_DETECTOR_FLAGS = ""
@@ -221,7 +221,7 @@ SOURCES=\
 OBJS = $(SOURCES:%.c=$(OBJ_DIRECTORY)/%.o)
 DEPS = $(OBJS:%.o=%.d)
 
-KERNEL_NEED = $(ASM) $(OBJS) $(CPP_CODE)
+KERNEL_NEED = $(ASM) $(OBJS)
 
 COMMON_FLAGS = -O0 -nostdlib -fno-stack-protector -fno-builtin -Ikernel/include/ -ffreestanding \
 			   -Wall -Wno-div-by-zero -Wno-address-of-packed-member -Wno-implicit-function-declaration \
@@ -279,7 +279,6 @@ QEMU_FLAGS = -cdrom kernel.iso -m $(MEMORY_SIZE) \
 			 -device hda-output,audiodev=pa0 \
 			 -trace "hda*" \
 			 -boot d \
-			 -cpu core2duo-v1 \
 			 -object filter-dump,id=dump0,netdev=net0,file=netdump.pcap \
 			 $(KVM_QEMU_FLAGS) \
 			 $(ADDITIONAL_QEMU_FLAGS)

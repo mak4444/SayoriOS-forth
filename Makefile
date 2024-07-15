@@ -46,12 +46,14 @@ run_remote_mon:
 
 run_ahci_sata:
 	$(QEMU) $(QEMU_FLAGS) -serial mon:stdio \
-	-device ahci,id=ahci \
+	-device ahci,id=ahci,debug=3 \
+	-trace "ahci*" \
 	-drive id=thatdisk,file=disk.img,if=none \
 	-device ide-hd,drive=thatdisk,bus=ahci.0 \
 	-drive id=thatcdrom,file=/dev/cdrom,if=none \
 	-device ide-cd,drive=thatcdrom,bus=ahci.1 \
-	# -trace "ahci*" \
+	# -drive id=thatcdrom,file=TEST.iso,if=none \
+	# -device ide-cd,drive=thatcdrom,bus=ahci.1 \
 
 run_disks:
 	$(QEMU) $(QEMU_FLAGS) -serial mon:stdio -hda disk1.img -hdb disk2.img -hdd disk3.img
@@ -107,15 +109,12 @@ clean:
 	-rm -f $(KERNEL_NEED)
 	-rm -f $(DEPS)
 	-rm -f iso/boot/ramdisk
-	-rm -f rust/target -r
 
 # Линковка файлов
-$(KERNEL): $(KERNEL_NEED) # $(RUST_SOURCES) rust/Cargo.toml
-	# $(MAKE) build_rust
+$(KERNEL): $(KERNEL_NEED)
 	@echo -e '\x1b[32mLINK \x1b[0m' $(KERNEL)
 	@rm -f $(KERNEL)
-	@$(LD) $(LDFLAGS) -o $(KERNEL) $(KERNEL_NEED) # $(RUST_OBJ_RELEASE)
-	@#llvm-strip -s $(KERNEL)   # I know I strip all symbols so making unwind useless. (Fix it later)
+	@$(LD) $(LDFLAGS) -o $(KERNEL) $(KERNEL_NEED)
 	@bash tools/genmap.sh
 	@bash tools/insertmap.sh
 	@ls -lh $(KERNEL) kernel.map
