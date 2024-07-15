@@ -461,10 +461,22 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     igfx_init();
 
 //    hda_init();
+	void k();
+
+	 create_process(k, "process", false, true);
+//    thread_create(get_current_proc(), k, 4096, true, false);
 
     qemu_log("System initialized everything at: %f seconds.", (double) (getTicks() - kernel_start_time) / getFrequency());
 
     cli();
 
-    while(1);
+    while(1)
+        ;
+}
+
+void k() {
+    for(int i = 0; i < 10; i++) {
+        qemu_err("HELLO");
+        sleep_ms(250);
+    }
 }
