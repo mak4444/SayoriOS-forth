@@ -341,12 +341,12 @@ DROP  VVVGETXY_V  \  SETXY
  0  VIEW0-Y @ 1+ MOCK_setxy
  BREAK
 
-   VIEW-EMIT-END IF BREAK
-  MCOLS  VVVGETXY DROP -
- SPACES_ED
+   VIEW-EMIT-END IF CR BREAK
+  MCOLS  VVVGETXY DROP - SPACES_ED
+ cr
 \ MOCK_getxy DROP IF  0  VIEW0-Y @ 1+ MOCK_setxy THEN
 \ getxy DROP IF  CR THEN
- cr
+\ 0  VIEW0-Y @ 1+ MOCK_setxy
 ;
 
 : BLOCK-SET
@@ -558,6 +558,18 @@ ADDR_CUR DUP BLOCK-BIG ! VSEARCHLEN + BLOCK-END !
 			VIEW-#Y0 @ 0= IF LEAVE THEN
 		LOOP
 	THEN ;
+
+: PAGE_DOWN_DO
+   MOCK_OUT
+                        MAX-VIEW-Y 0
+                        ?DO VIEW-#Y0> \ OFFSET LEN
+                           MAX-VIEW-Y 0
+                           ?DO NEXT-LINE LOOP NIP
+                                IF VIEW-#Y0>  NEXT-LINE DROP
+                                   VIEW_BUF - VIEW-#Y0   !
+                                THEN
+                        LOOP
+;
 
 : VIEW_DOWN
  VIEW-Y @  MAX-VIEW-Y 1- U<
@@ -854,7 +866,7 @@ KEY DROP VIEW-PAGE
                         MOCK_OUT VIEW-PAGE
 			REAL_OUT VIEW-PAGE
 	 ENDOF    \ Up
- EXKEY_DOWN      OF VIEW_DOWN REAL_OUT \ VIEW-PAGE
+ EXKEY_DOWN      OF VIEW_DOWN REAL_OUT VIEW-PAGE
 		ENDOF
 
  EXKEY_PAGE_UP   OF MOCK_OUT PAGE_UP_DO VIEW-PAGE REAL_OUT VIEW-PAGE
@@ -879,15 +891,9 @@ KEY DROP VIEW-PAGE
 			THEN
 		ENDOF
 
- EXKEY_PAGE_DOWN OF      MOCK_OUT
-                        MAX-VIEW-Y 0
-                        ?DO VIEW-#Y0> \ OFFSET LEN
-                           MAX-VIEW-Y 0
-                           ?DO NEXT-LINE LOOP NIP
-                                IF VIEW-#Y0>  NEXT-LINE DROP
-                                   VIEW_BUF - VIEW-#Y0   !
-                                THEN
-                        LOOP VIEW-PAGE REAL_OUT VIEW-PAGE  ENDOF   \ Page Down
+ EXKEY_PAGE_DOWN OF   PAGE_DOWN_DO
+ VIEW-PAGE REAL_OUT VIEW-PAGE
+ ENDOF \ Page Down
 		CASE
  EXKEY_END CTL+      OF\
  EXKEY_PAGE_DOWN  CTL+ OF;
