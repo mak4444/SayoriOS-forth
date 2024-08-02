@@ -1724,14 +1724,10 @@ void  MakeImag(void)
 }
 
 
-uint32_t forth_sys(uint32_t c, char* v[]){
+uint32_t forth_sys(uint32_t argc, char** argv) {
 	forth_run=1;
-
-     _tty_printf("Hello from Forth!!! %s \n", v[1]);
-
-
+     	tty_printf("Hello from Forth!!!\n");
 	set_cursor_enabled(false);
-//         pek();
 	tib[0]=~pDoConst;
 	i2in[0]=~pDoVar;
 	SourceId[0]=~pDoConst;
